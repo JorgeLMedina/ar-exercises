@@ -22,9 +22,10 @@ puts 'CONNECTED'
 
 puts 'Setting up Database (recreating tables) ...'
 
+ActiveRecord::Base.connection.execute('DROP TABLE IF EXISTS employees CASCADE;')
+ActiveRecord::Base.connection.execute('DROP TABLE IF EXISTS stores CASCADE;')
+
 ActiveRecord::Schema.define do
-  drop_table :stores if ActiveRecord::Base.connection.table_exists?(:stores)
-  drop_table :employees if ActiveRecord::Base.connection.table_exists?(:employees)
   create_table :stores do |t|
     t.column :name, :string
     t.column :annual_revenue, :integer
@@ -32,8 +33,9 @@ ActiveRecord::Schema.define do
     t.column :womens_apparel, :boolean
     t.timestamps null: false
   end
+
   create_table :employees do |table|
-    table.references :store
+    table.references :store, foreign_key: true
     table.column :first_name, :string
     table.column :last_name, :string
     table.column :hourly_rate, :integer
